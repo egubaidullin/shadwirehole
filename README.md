@@ -1,55 +1,14 @@
 ## What is this?
-WireHole is a combination of WireGuard, PiHole, and Unbound in a docker-compose project with the intent of enabling users to quickly and easily create and deploy a personally managed full or split-tunnel WireGuard VPN with ad blocking capabilities (via Pihole), and DNS caching with additional privacy options (via Unbound). 
-
-## Author
-
-👤 **Devin Stokes**
-
-* Twitter: [@DevinStokes](https://twitter.com/DevinStokes)
-* Github: [@IAmStoxe](https://github.com/IAmStoxe)
-
-## 🤝 Contributing
-
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/IAmStoxe/wirehole/issues). 
-
-## Show your support
-
-Give a ⭐ if this project helped you!
-
-<a href="https://www.buymeacoffee.com/stoxe" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
- 
----
-
-
-### Supported Architectures
-
-The Wireguard image supports multiple architectures such as `x86-64`, `arm64` and `armhf`. Linuxserver - who makes the wireguard image we use - utilises the docker manifest for multi-platform awareness. 
-
-More information is available from docker [here](https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-2.md#manifest-list) and LinuxServer's announcement [here](https://blog.linuxserver.io/2019/02/21/the-lsio-pipeline-project/).
-
-Simply pulling `linuxserver/wireguard` should retrieve the correct image for your arch, but you can also pull specific arch images via tags 
-
-> *This is the default configuration in this project*
-
-**The architectures supported by this image are:**
-
-| Architecture | Tag |
-| :----: | --- |
-| x86-64 | amd64-latest |
-| arm64 | arm64v8-latest |
-| armhf | arm32v7-latest |
-
-
-##### Optional - Fully Automated Deployment on Oracle Cloud:
-  - https://medium.com/@devinjaystokes/automating-the-deployment-of-your-forever-free-pihole-and-wireguard-server-dce581f71b7
- 
+This is a fork of the [wirehole](https://github.com/IAmStoxe/wirehole) repository by Devin Stokes.
+In this fork, Shadowsocks support has been added.
+ShadWireHole is a combination of ShadowSocks, WireGuard, PiHole, and Unbound in a docker-compose project with the intent of enabling users to quickly and easily create and deploy a personally managed full or split-tunnel WireGuard VPN with ad blocking capabilities (via Pihole), and DNS caching with additional privacy options (via Unbound). 
 
 ### Quickstart
 To get started all you need to do is clone the repository and spin up the containers.
 
 ```bash
-git clone https://github.com/IAmStoxe/wirehole.git
-cd wirehole
+git clone https://github.com/GubaidullinED/shadwirehole.git
+cd shadwirehole
 docker-compose up
 ```
 ### Full Setup
@@ -287,50 +246,19 @@ Providers they have the information for:
 Provided your DNS is properly configured on the device you're using, and you're connected to WireGuard, you can now navigate to http://pi.hole/admin and it should take you right to the pihole admin interface.
 
 ---
-## Support Info
 
-* Shell access whilst the container is running: `docker exec -it wireguard /bin/bash`
-* To monitor the logs of the container in realtime: `docker logs -f wireguard`
-* container version number
-  * `docker inspect -f '{{ index .Config.Labels "build_version" }}' wireguard`
-* image version number
-  * `docker inspect -f '{{ index .Config.Labels "build_version" }}' ghcr.io/linuxserver/wireguard`
-
+## Shadowsocks
+To set a password for Shadowsocks, specify it in the environment:
+```
+environment:
+PASSWORD=$SS_PASSWORD
+```
+And then set the SS_PASSWORD environment variable with the actual password value.
+or you can set a password in the Shadowsocks section:
+```
+- PASSWORD=Your_password
+```
 ---
-
-## Updating Info
-
-LinuxServer images are generally static, versioned, and require an image update and container recreation to update the app inside. 
-> **Note:** Updating apps inside the container is NOT supported.
-
-Below are the instructions for updating **containers**:
-
-### Via Docker Compose
-
-* Update all images: `docker-compose pull`
-  * or update a single image: `docker-compose pull wireguard`
-* Let compose update all containers as necessary: `docker-compose up -d`
-  * or update a single container: `docker-compose up -d wireguard`
-* You can also remove the old dangling images: `docker image prune`
-
-### Via Watchtower auto-updater (only use if you don't remember the original parameters)
-
-* Pull the latest image at its tag and replace it with the same env variables in one run:
-
-  ```bash
-  docker run --rm \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower \
-  --run-once wireguard
-  ```
-
-* You can also remove the old dangling images: `docker image prune`
-
-> **Note:** Watchtower is not endorsed as a solution for automated updates of existing Docker containers. In fact generally automated updates are discouraged. However, this is a useful tool for one-time manual updates of containers where you have forgotten the original parameters. In the long term, LinuxServer.io highly recommends using Docker Compose.
-
-
----
-
 
 ## FAQ
 
@@ -344,16 +272,6 @@ To add more peers/clients later on, you increment the `PEERS` environment variab
 To display the QR codes of active peers again, you can use the following command and list the peer numbers as arguments: `docker-compose exec wireguard /app/show-peer 1 4 5` will show peers #1 #4 and #5 (Keep in mind that the QR codes are also stored as PNGs in the config folder).
 
 The templates used for server and peer confs are saved under /config/templates. Advanced users can modify these templates and force conf generation by deleting /config/wg0.conf and restarting the container.
-
-### Can I build ARM variants on x86_64?
-
-The ARM variants can be built on x86_64 hardware using `multiarch/qemu-user-static`
-
-```bash
-docker run --rm --privileged multiarch/qemu-user-static:register --reset
-```
-
-Once registered you can define the dockerfile to use with `-f Dockerfile.aarch64`.
 
 ### Where can I get additional block lists?
 * [The Big Blocklist Collection](https://firebog.net/)
@@ -377,10 +295,6 @@ Both of these approaches have positives and negatives however their setup is out
 
 
 ---
-
-###### Shout out to LinuxServer.io for their documentation and maintenance of the incredible Wireguard image.
-
---- 
 
 ### Infrastructure model
 
