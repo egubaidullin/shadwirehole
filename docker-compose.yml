@@ -35,7 +35,6 @@ services:
       - PEERS=1 # How many peers to generate for you (clients)
       - PEERDNS=10.2.0.100 # Set it to point to pihole
       - INTERNAL_SUBNET=10.6.0.0
-      
     volumes:
       - ./wireguard:/config
       - /lib/modules:/lib/modules
@@ -46,7 +45,12 @@ services:
       - 10.2.0.200 # Points to unbound
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "wireguard"
     restart: unless-stopped
     networks:
       private_network:
@@ -78,3 +82,30 @@ services:
     networks:
       private_network:
         ipv4_address: 10.2.0.100
+
+  shadowsocks:
+    depends_on: [unbound, pihole]
+    image: shadowsocks/shadowsocks-libev:latest
+    container_name: shadowsocks
+    environment:
+      - TZ=America/Los_Angeles
+      - PASSWORD=Your_password
+      - METHOD=chacha20-ietf-poly1305
+      - ARGS=--fast-open
+      - SERVER_ADDR=10.2.0.50
+      - DNS_ADDRS=10.2.0.100,10.2.0.200
+    ports:
+      - "8388:8388"
+      - "8388:8388/udp"
+    volumes:
+      - ./shadowsock:/etc/shadowsocks-libev
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "shadowsocks"
+    restart: unless-stopped
+    networks:
+      private_network:
+        ipv4_address: 10.2.0.50  
