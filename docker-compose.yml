@@ -108,4 +108,37 @@ services:
     restart: unless-stopped
     networks:
       private_network:
-        ipv4_address: 10.2.0.50  
+        ipv4_address: 10.2.0.50
+
+  wireguard-ui:
+    depends_on: [wireguard]
+    container_name: wireguard-ui
+    image: ngoduykhanh/wireguard-ui:latest
+    restart: unless-stopped
+    hostname: wireguard-ui
+    dns:
+      - 127.0.0.1
+      - 10.2.0.200 # Points to unbound
+    environment:
+      - SENDGRID_API_KEY
+      - EMAIL_FROM_ADDRESS
+      - EMAIL_FROM_NAME
+      - SESSION_SECRET
+      - WGUI_USERNAME=admin
+      - WGUI_PASSWORD=password
+      - WG_CONF_TEMPLATE
+      - WGUI_MANAGE_START=true
+      - WGUI_MANAGE_RESTART=true
+      - WGUI_SERVER_INTERFACE_ADDRESSES=10.2.0.0/24
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m            
+    volumes:
+      - ./db:/app/db
+      - ./wireguard:/etc/wireguard
+    cap_add:
+      - NET_ADMIN
+    networks:
+      private_network:
+        ipv4_address: 10.2.0.10
