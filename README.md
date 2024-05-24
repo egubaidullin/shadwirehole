@@ -41,7 +41,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-
     sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 # wirehole
-git clone [https://github.com/IAmStoxe/wirehole.git](https://github.com/GubaidullinED/shadwirehole.git) &&
+git clone [https://github.com/GubaidullinED/shadwirehole.git](https://github.com/GubaidullinED/shadwirehole.git) &&
     cd wirehole &&
     docker-compose up
 
